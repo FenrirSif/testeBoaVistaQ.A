@@ -1,0 +1,98 @@
+/// <reference types="Cypress" />
+
+describe('Teste funcional', () => {
+    before(() =>{
+        cy.visit('https://bugbank.netlify.app/')
+    })
+    it('Validação de nome dos campos',() =>{
+        cy.get('.ihdmxA').click()
+        cy.get('#btnBackButton').should('have.text', 'Voltar ao login')
+        cy.get(':nth-child(2) > .input__label').should('have.text', 'E-mail') 
+        cy.get(':nth-child(3) > .input__label').should('have.text', 'Nome')
+        cy.get(':nth-child(4) > .style__ContainerFieldInput-sc-s3e9ea-0 > .input__label').should('have.text', 'Senha')    
+        cy.get(':nth-child(5) > .style__ContainerFieldInput-sc-s3e9ea-0 > .input__label').should('have.text', 'Confirmação senha')       
+        cy.get('.styles__ToggleText-sc-7fhc7g-3').should('contain', 'Criar conta com saldo')
+        cy.get('.styles__ContainerFormRegister-sc-7fhc7g-0 > .style__ContainerButton-sc-1wsixal-0').should('have.text', 'Cadastrar')
+        
+    })  
+    it('Campos obrigatórios no cadastro',()=> {
+        cy.get('.styles__ContainerFormRegister-sc-7fhc7g-0 > .style__ContainerButton-sc-1wsixal-0').click()
+        cy.get(':nth-child(2) > .input__warging').should('have.text','É campo obrigatório')
+        cy.get(':nth-child(4) > .style__ContainerFieldInput-sc-s3e9ea-0 > .input__warging').should('have.text','É campo obrigatório')
+        cy.get(':nth-child(5) > .style__ContainerFieldInput-sc-s3e9ea-0 > .input__warging').should('have.text','É campo obrigatório')
+    })
+        
+    it('Validar email', () =>{
+        cy.get(':nth-child(2) > .input__default')
+        .clear()
+        .type('sfsfafas@sfasfsaf')
+        cy.get(':nth-child(2) > .input__warging').should('have.text','Formato inválido') 
+    })
+    it('Preencher cadastro sem nome',() =>{
+        cy.get(':nth-child(2) > .input__default')
+        .clear()
+        .type('a@a.com')
+        cy.get(':nth-child(4) > .style__ContainerFieldInput-sc-s3e9ea-0 > .input__default')
+            .clear()
+            .type('123')
+        cy.get(':nth-child(5) > .style__ContainerFieldInput-sc-s3e9ea-0 > .input__default')
+            .clear()
+            .type('123')
+        cy.get('.styles__ContainerFormRegister-sc-7fhc7g-0 > .style__ContainerButton-sc-1wsixal-0').click()
+        cy.get('#modalText').should('have.text','Nome não pode ser vazio.\n')
+        cy.get('#btnCloseModal').click()
+
+    })
+    it('Preencher cadastro com senhas diferentes',() =>{
+        cy.get(':nth-child(2) > .input__default')
+        .clear()
+        .type('teste@teste.com')
+        cy.get(':nth-child(3) > .input__default').type('Teste')
+        cy.get(':nth-child(4) > .style__ContainerFieldInput-sc-s3e9ea-0 > .input__default')
+            .clear()
+            .type('123')
+        cy.get(':nth-child(5) > .style__ContainerFieldInput-sc-s3e9ea-0 > .input__default')
+            .clear()
+            .type('12356')
+        cy.get('.styles__ContainerFormRegister-sc-7fhc7g-0 > .style__ContainerButton-sc-1wsixal-0').click()
+        cy.get('#modalText').should('have.text','As senhas não são iguais.\n')
+        cy.get('#btnCloseModal').click()
+    })
+        
+   it('Criar cadastro com sucesso',() =>{
+        cy.get(':nth-child(2) > .input__default')
+            .clear()
+            .type('teste@gmail.com')
+        cy.get(':nth-child(3) > .input__default')
+            .clear()
+            .type('testermeson')
+        cy.get(':nth-child(4) > .style__ContainerFieldInput-sc-s3e9ea-0 > .input__default')
+            .clear()
+            .type('123')
+        cy.get(':nth-child(5) > .style__ContainerFieldInput-sc-s3e9ea-0 > .input__default')
+            .clear()
+            .type('123')
+        cy.get('.styles__ContainerFormRegister-sc-7fhc7g-0 > .style__ContainerButton-sc-1wsixal-0').click()
+        cy.get('#modalText').should('contain','foi criada com sucesso')
+        cy.get('#btnCloseModal').click()
+    })
+    
+    it('Login validação de nomes dos campos',()=>{
+        cy.get('.style__ContainerFormLogin-sc-1wbjw6k-0 > :nth-child(1) > .input__label').should('have.text','E-mail')
+        cy.get('.style__ContainerFormLogin-sc-1wbjw6k-0 > .login__password > .style__ContainerFieldInput-sc-s3e9ea-0 > .input__label').should('have.text','Senha')
+        cy.get('.otUnI').should('have.text','Acessar')
+        cy.get('.ihdmxA').should('have.text','Registrar')
+    })
+    it('Login validação de campos obrigatórios',()=>{
+        cy.get('.otUnI').click()
+        cy.get('.style__ContainerFormLogin-sc-1wbjw6k-0 > :nth-child(1) > .input__warging').should('have.text','É campo obrigatório')
+        cy.get('.style__ContainerFormLogin-sc-1wbjw6k-0 > .login__password > .style__ContainerFieldInput-sc-s3e9ea-0 > .input__warging').should('have.text','É campo obrigatório')
+    })
+    it.only('Login validação com erro',()=>{
+        cy.get('.style__ContainerFormLogin-sc-1wbjw6k-0 > :nth-child(1) > .input__default').type('teste@gmail.com')
+        cy.get('.style__ContainerFormLogin-sc-1wbjw6k-0 > .login__password > .style__ContainerFieldInput-sc-s3e9ea-0 > .input__default').type('123')
+        cy.get('.otUnI').click()
+        cy.get('#modalText').should('contain','Usuário ou senha inválido')
+        cy.get('#btnCloseModal').click()
+    })
+})
